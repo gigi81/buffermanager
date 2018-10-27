@@ -129,10 +129,11 @@ namespace Grillisoft.BufferManager
 
         private T[] GetFreeBuffer()
         {
-            var ret = _freeBuffers.Count <= 0 ? null : _freeBuffers.Pop();
-            if (ret != null)
-                _buffers.Add(ret);
+            if (_freeBuffers.Count <= 0)
+                return null;
 
+            var ret = _freeBuffers.Pop();
+            _buffers.Add(ret);
             if (_clear)
                 Array.Clear(ret, 0, ret.Length);
 
