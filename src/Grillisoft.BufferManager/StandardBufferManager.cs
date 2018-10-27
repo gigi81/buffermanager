@@ -6,6 +6,7 @@ namespace Grillisoft.BufferManager
     public class StandardBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {
         public const int DefaultBufferSize = 4096;
+        public const int MaxFreeBufferSize = 1024 * 1024 * 64; //64MB
 
         /// <summary>
         /// Contains the list of the buffers in use
@@ -23,6 +24,7 @@ namespace Grillisoft.BufferManager
         private readonly object _sync = new object();
 
         private readonly int _bufferSize;
+        private readonly int _maxFreeBufferSize;
         private readonly bool _clear;
         private int _count = 0;
 
@@ -32,23 +34,25 @@ namespace Grillisoft.BufferManager
         {
         }
 
-        public StandardBufferManager(int bufferSize, bool clear = true)
+        public StandardBufferManager(int bufferSize, bool clear = true, int maxFreeBufferSize = MaxFreeBufferSize)
         {
             if (bufferSize <= 0)
                 throw new ArgumentException("Buffer size must be bigger than 0", nameof(Buffer));
 
             _bufferSize = bufferSize;
             _clear = clear;
+            _maxFreeBufferSize = maxFreeBufferSize;
         }
         #endregion
 
-        public void Init(int count)
+        public void Init(int buffers)
         {
             lock (_sync)
             {
-                while (count > 0)
+                while (buffers > 0)
                 {
-                    _freeBuffers.Push(new T[_bufferSize]);
+                    _freeBuffers.Push(this.CreateBuffer());
+                    buffers--;
                 }
             }
         }
@@ -115,7 +119,11 @@ namespace Grillisoft.BufferManager
             if (!_buffers.Contains(data))
                 return;
 
-            _freeBuffers.Push(data);
+            if (_freeBuffers.Count * _bufferSize <= _maxFreeBufferSize)
+                _freeBuffers.Push(data);
+            else
+                _count--;
+
             _buffers.Remove(data);
         }
 
