@@ -26,24 +26,18 @@ namespace Grillisoft.BufferManager
         private readonly int _bufferSize;
         private readonly int _maxFreeBufferSize;
         private readonly bool _clear;
-        private int _count = 0;
+        private readonly IBufferManagerEvents _events;
 
-        #region Constructors
-        public StandardBufferManager(bool clear = true)
-            : this(DefaultBufferSize, clear)
-        {
-        }
-
-        public StandardBufferManager(int bufferSize, bool clear = true, int maxFreeBufferSize = MaxFreeBufferSize)
+        public StandardBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IBufferManagerEvents events = null, int maxFreeBufferSize = MaxFreeBufferSize)
         {
             if (bufferSize <= 0)
                 throw new ArgumentException("Buffer size must be bigger than 0", nameof(Buffer));
 
             _bufferSize = bufferSize;
             _clear = clear;
+            _events = events;
             _maxFreeBufferSize = maxFreeBufferSize;
         }
-        #endregion
 
         public void Init(int buffers)
         {
@@ -52,29 +46,8 @@ namespace Grillisoft.BufferManager
                 while (buffers > 0)
                 {
                     _freeBuffers.Push(this.CreateBuffer());
+                    _events?.Cache(_bufferSize);
                     buffers--;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The total number of <see cref="T"/> elements managed
-        /// </summary>
-        public long Size
-        {
-            get { return _bufferSize * _count; }
-        }
-
-        /// <summary>
-        /// The total number of <see cref="T"/> elements free
-        /// </summary>
-        public long FreeSize
-        {
-            get
-            {
-                lock (_sync)
-                {
-                    return _freeBuffers.Count * _bufferSize;
                 }
             }
         }
@@ -120,11 +93,13 @@ namespace Grillisoft.BufferManager
                 return;
 
             if (_freeBuffers.Count * _bufferSize <= _maxFreeBufferSize)
+            {
                 _freeBuffers.Push(data);
-            else
-                _count--;
+                _events?.Cache(_bufferSize);
+            }
 
             _buffers.Remove(data);
+            _events?.Free(_bufferSize);
         }
 
         private T[] GetBuffer()
@@ -141,7 +116,11 @@ namespace Grillisoft.BufferManager
                 return null;
 
             var ret = _freeBuffers.Pop();
+            _events?.FreeCache(_bufferSize);
+
             _buffers.Add(ret);
+            _events?.Allocate(_bufferSize);
+
             if (_clear)
                 Array.Clear(ret, 0, ret.Length);
 
@@ -152,14 +131,13 @@ namespace Grillisoft.BufferManager
         {
             var ret = this.CreateBuffer();
             _buffers.Add(ret);
+            _events?.Allocate(_bufferSize);
             return ret;
         }
 
         private T[] CreateBuffer()
         {
-            var ret = new T[_bufferSize];
-            _count++;
-            return ret;
+            return new T[_bufferSize];
         }
     }
 }

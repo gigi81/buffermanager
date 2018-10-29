@@ -15,9 +15,4 @@ namespace Grillisoft.BufferManager
 
         void Free(T[][] data);
     }
-
-    public interface IContiguousBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
-    {
-        T[] AllocateContiguous(int length);
-    }
 }
