@@ -53,7 +53,7 @@ namespace Grillisoft.BufferManager.Tests
             var stats = new BufferManagerStats();
             var manager = new StandardBufferManager<byte>(true, BufferSize, stats);
 
-            for (int i=0; i< count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var alloc = manager.Allocate(size);
 
@@ -62,6 +62,31 @@ namespace Grillisoft.BufferManager.Tests
                 manager.Free(alloc);
             }
 
+            //nothing allocated, 1 buffer cached
+            Assert.Equal(0, stats.Allocated);
+            Assert.Equal(CalculateAllocated(size), stats.Cached);
+
+            var allocs = Enumerable.Range(1, count).Select(i => manager.Allocate(size)).ToList();
+
+            //all count allocated, nothing cached
+            Assert.Equal(CalculateAllocated(size) * count, stats.Allocated);
+            Assert.Equal(0, stats.Cached);
+
+            var first = allocs.Take(count / 2).ToArray();
+            foreach (var b in first)
+            {
+                manager.Free(b);
+                allocs.Remove(b);
+            }
+
+            //half and half allocated and cached
+            Assert.Equal(CalculateAllocated(size) * count / 2, stats.Allocated);
+            Assert.Equal(CalculateAllocated(size) * count / 2, stats.Cached);
+
+            foreach (var b in allocs)
+                manager.Free(b);
+
+            //nothing allocated, all count cached
             Assert.Equal(0, stats.Allocated);
             Assert.Equal(CalculateAllocated(size) * count, stats.Cached);
         }
@@ -84,13 +109,12 @@ namespace Grillisoft.BufferManager.Tests
 
                 Assert.True(size <= alloc.Sum(a => a.Length));
 
-                Thread.Sleep(randomize.Next() * 1000);
-
                 manager.Free(alloc);
             });
 
             Assert.Equal(0, stats.Allocated);
-            Assert.Equal(CalculateAllocated(size) * count, stats.Cached);
+            Assert.True(stats.Cached >= CalculateAllocated(size));
+            Assert.True(stats.Cached <= CalculateAllocated(size) * count);
         }
 
         private static int CalculateAllocated(int size)
