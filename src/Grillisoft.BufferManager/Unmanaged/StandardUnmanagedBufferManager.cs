@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Grillisoft.BufferManager
 {
-    public class StandardBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
+    public class StandardUnmanagedBufferManager : IUnmanagedBufferManager
     {
         public const int DefaultBufferSize = 4096;
         public const int DefaultCacheSize = 1024 * 1024 * 64; //64MB
@@ -12,12 +13,12 @@ namespace Grillisoft.BufferManager
         /// <summary>
         /// Container for the buffers in use
         /// </summary>
-        private readonly BuffersHashSet<T[]> _buffers;
+        private readonly BuffersHashSet<IntPtr> _buffers;
 
         /// <summary>
         /// Container for the cached buffers (available to be reused)
         /// </summary>
-        private readonly BuffersCache<T[]> _cache;
+        private readonly BuffersCache<IntPtr> _cache;
 
         /// <summary>
         /// Oject used to syncronise access to the BufferManager
@@ -26,14 +27,14 @@ namespace Grillisoft.BufferManager
 
         private readonly bool _clear;
 
-        public StandardBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, ICacheEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
+        public StandardUnmanagedBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, ICacheEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)
                 throw new ArgumentException("Buffer size must be bigger than 0", nameof(bufferSize));
 
             _bufferSize = bufferSize;
-            _buffers = new BuffersHashSet<T[]>(bufferSize, allocEvents);
-            _cache = new BuffersCache<T[]>(bufferSize, cacheEvents, cacheSize);
+            _buffers = new BuffersHashSet<IntPtr>(bufferSize, allocEvents);
+            _cache = new BuffersCache<IntPtr>(bufferSize, cacheEvents, cacheSize);
             _clear = clear;
         }
 
@@ -54,12 +55,12 @@ namespace Grillisoft.BufferManager
         /// </summary>
         /// <param name="size">The total size of the arrays to return</param>
         /// <returns></returns>
-        public T[][] Allocate(int size)
+        public IntPtr[] Allocate(int size)
         {
             if (size <= 0)
-                return new T[0][];
+                return new IntPtr[0];
 
-            var ret = new T[((size - 1) / _bufferSize) + 1][];
+            var ret = new IntPtr[((size - 1) / _bufferSize) + 1];
 
             for (int i = 0; i < ret.Length; i++)
                 ret[i] = this.GetBuffer();
@@ -67,7 +68,7 @@ namespace Grillisoft.BufferManager
             return ret;
         }
 
-        public void Free(T[][] data)
+        public void Free(IntPtr[] data)
         {
             lock (_sync)
             {
@@ -76,7 +77,7 @@ namespace Grillisoft.BufferManager
             }
         }
 
-        public void Free(T[] data)
+        public void Free(IntPtr data)
         {
             lock (_sync)
             {
@@ -84,15 +85,16 @@ namespace Grillisoft.BufferManager
             }
         }
 
-        private void FreeInternal(T[] data)
+        private void FreeInternal(IntPtr data)
         {
             if (!_buffers.Remove(data))
                 return;
 
-            _cache.TryPush(data);
+            if (!_cache.TryPush(data))
+                Marshal.FreeHGlobal(data);
         }
 
-        private T[] GetBuffer()
+        private IntPtr GetBuffer()
         {
             lock (_sync)
             {
@@ -100,28 +102,28 @@ namespace Grillisoft.BufferManager
             }
         }
 
-        private T[] GetFreeBuffer()
+        private IntPtr? GetFreeBuffer()
         {
             if (!_cache.TryPop(out var ret))
                 return null;
 
             if (_clear)
-                Array.Clear(ret, 0, ret.Length);
+                throw new NotImplementedException("Clear not implemented yet. Need to find a good memset for c#");
 
             return ret;
         }
 
-        private T[] CreateBuffer()
+        private IntPtr CreateBuffer()
         {
-            return new T[_bufferSize];
+            return Marshal.AllocHGlobal(_bufferSize);
         }
 
         public void Dispose()
         {
-            lock (_sync)
+            lock(_sync)
             {
-                _buffers.Clear();
-                _cache.Clear();
+                _buffers.Clear(ptr => Marshal.FreeHGlobal(ptr));
+                _cache.Clear(ptr => Marshal.FreeHGlobal(ptr));
             }
         }
     }

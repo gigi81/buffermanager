@@ -10,7 +10,7 @@ namespace Grillisoft.BufferManager
         private readonly int _max;
 
         /// <summary>
-        /// Contains the list of the buffers NOT in use
+        /// Container for the buffers NOT in use
         /// </summary>
         private readonly Stack<T> _buffers = new Stack<T>();
 
@@ -44,7 +44,7 @@ namespace Grillisoft.BufferManager
             return true;
         }
 
-        public void Clear(Action<T> action)
+        public void Clear(Action<T> action = null)
         {
             var count = _buffers.Count;
 

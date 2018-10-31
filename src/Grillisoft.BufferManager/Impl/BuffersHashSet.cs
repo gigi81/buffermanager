@@ -33,7 +33,7 @@ namespace Grillisoft.BufferManager
             return true;
         }
 
-        public void Clear(Action<T> action)
+        public void Clear(Action<T> action = null)
         {
             var count = _buffers.Count;
 

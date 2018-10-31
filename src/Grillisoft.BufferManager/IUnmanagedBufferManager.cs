@@ -4,10 +4,10 @@ namespace Grillisoft.BufferManager
 {
     public interface IUnmanagedBufferManager : IDisposable
     {
-        IntPtr[] Alloc(int size);
+        IntPtr[] Allocate(int size);
 
-        IntPtr Free(IntPtr[] buffer);
+        void Free(IntPtr[] buffer);
 
-        IntPtr Free(IntPtr buffer);
+        void Free(IntPtr buffer);
     }
 }
