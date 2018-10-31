@@ -2,13 +2,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using System.Threading;
 
 namespace Grillisoft.BufferManager.Tests
 {
     public class BufferManagerTests
     {
         private const int BufferSize = 4096;
+
+        private StandardBufferManager<byte> CreateManager(BufferManagerStats stats)
+        {
+            return new StandardBufferManager<byte>(true, BufferSize, stats, stats);
+        }
 
         [Theory]
         [InlineData(100)]
@@ -18,7 +22,7 @@ namespace Grillisoft.BufferManager.Tests
         public void Allocate(int size)
         {
             var stats = new BufferManagerStats();
-            var manager = new StandardBufferManager<byte>(true, BufferSize, stats);
+            var manager = CreateManager(stats);
             var alloc = manager.Allocate(size);
 
             Assert.True(size <= alloc.Sum(a => a.Length));
@@ -33,7 +37,7 @@ namespace Grillisoft.BufferManager.Tests
         public void AllocateAndFree(int size)
         {
             var stats = new BufferManagerStats();
-            var manager = new StandardBufferManager<byte>(true, BufferSize, stats);
+            var manager = CreateManager(stats);
             var alloc = manager.Allocate(size);
 
             Assert.True(size <= alloc.Sum(a => a.Length));
@@ -51,7 +55,7 @@ namespace Grillisoft.BufferManager.Tests
         public void MultipleAllocAndFree(int size, int count)
         {
             var stats = new BufferManagerStats();
-            var manager = new StandardBufferManager<byte>(true, BufferSize, stats);
+            var manager = CreateManager(stats);
 
             for (int i = 0; i < count; i++)
             {
@@ -100,7 +104,7 @@ namespace Grillisoft.BufferManager.Tests
         public void ParallelAllocAndFree(int size, int count)
         {
             var stats = new BufferManagerStats();
-            var manager = new StandardBufferManager<byte>(true, BufferSize, stats);
+            var manager = CreateManager(stats);
             var randomize = new Random((int) DateTime.Now.Ticks);
 
             Parallel.ForEach(Enumerable.Range(1, count), i =>

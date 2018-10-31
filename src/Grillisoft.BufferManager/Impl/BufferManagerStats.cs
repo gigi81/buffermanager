@@ -2,16 +2,16 @@
 
 namespace Grillisoft.BufferManager
 {
-    public class BufferManagerStats : IBufferManagerStats, IBufferManagerEvents
+    public class BufferManagerStats : IBufferManagerStats, IAllocEvents, ICacheEvents
     {
         private long _allocated;
         private long _cached;
 
-        public long Allocated => _allocated;
+        public long Allocated => Interlocked.Read(ref _allocated);
 
-        public long Cached => _cached;
+        public long Cached => Interlocked.Read(ref _cached);
 
-        public long Total => _allocated + _cached;
+        public long Total => this.Allocated + this.Cached;
 
         public void Allocate(int size)
         {

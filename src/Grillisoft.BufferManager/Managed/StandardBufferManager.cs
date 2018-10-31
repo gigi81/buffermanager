@@ -1,53 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Grillisoft.BufferManager
 {
     public class StandardBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {
         public const int DefaultBufferSize = 4096;
-        public const int MaxFreeBufferSize = 1024 * 1024 * 64; //64MB
+        public const int DefaultCacheSize = 1024 * 1024 * 64; //64MB
+
+        private readonly int _bufferSize;
 
         /// <summary>
-        /// Contains the list of the buffers in use
+        /// Container for the buffers in use
         /// </summary>
-        private readonly HashSet<T[]> _buffers = new HashSet<T[]>();
+        private readonly BuffersHashSet<T[]> _buffers;
 
         /// <summary>
-        /// Contains the list of the buffers NOT in use
+        /// Container for the cached buffers (available to be reused)
         /// </summary>
-        private readonly Stack<T[]> _freeBuffers = new Stack<T[]>();
+        private readonly BuffersCache<T[]> _cache;
 
         /// <summary>
         /// Oject used to syncronise access to the BufferManager
         /// </summary>
         private readonly object _sync = new object();
 
-        private readonly int _bufferSize;
-        private readonly int _maxFreeBufferSize;
         private readonly bool _clear;
-        private readonly IBufferManagerEvents _events;
 
-        public StandardBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IBufferManagerEvents events = null, int maxFreeBufferSize = MaxFreeBufferSize)
+        public StandardBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, ICacheEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)
-                throw new ArgumentException("Buffer size must be bigger than 0", nameof(Buffer));
+                throw new ArgumentException("Buffer size must be bigger than 0", nameof(bufferSize));
 
             _bufferSize = bufferSize;
+            _buffers = new BuffersHashSet<T[]>(bufferSize, allocEvents);
+            _cache = new BuffersCache<T[]>(bufferSize, cacheEvents, cacheSize);
             _clear = clear;
-            _events = events;
-            _maxFreeBufferSize = maxFreeBufferSize;
         }
 
         public void Init(int buffers)
         {
             lock (_sync)
             {
-                while (buffers > 0)
+                while (buffers-- > 0)
                 {
-                    _freeBuffers.Push(this.CreateBuffer());
-                    _events?.Cache(_bufferSize);
-                    buffers--;
+                    if (!_cache.TryPush(this.CreateBuffer()))
+                        return;
                 }
             }
         }
@@ -89,49 +86,28 @@ namespace Grillisoft.BufferManager
 
         private void FreeInternal(T[] data)
         {
-            if (!_buffers.Contains(data))
+            if (!_buffers.Remove(data))
                 return;
 
-            if (_freeBuffers.Count * _bufferSize <= _maxFreeBufferSize)
-            {
-                _freeBuffers.Push(data);
-                _events?.Cache(_bufferSize);
-            }
-
-            _buffers.Remove(data);
-            _events?.Free(_bufferSize);
+            _cache.TryPush(data);
         }
 
         private T[] GetBuffer()
         {
             lock (_sync)
             {
-                return GetFreeBuffer() ?? AllocateInternal();
+                return _buffers.Add(GetFreeBuffer() ?? CreateBuffer());
             }
         }
 
         private T[] GetFreeBuffer()
         {
-            if (_freeBuffers.Count <= 0)
+            if (!_cache.TryPop(out var ret))
                 return null;
-
-            var ret = _freeBuffers.Pop();
-            _events?.FreeCache(_bufferSize);
-
-            _buffers.Add(ret);
-            _events?.Allocate(_bufferSize);
 
             if (_clear)
                 Array.Clear(ret, 0, ret.Length);
 
-            return ret;
-        }
-
-        private T[] AllocateInternal()
-        {
-            var ret = this.CreateBuffer();
-            _buffers.Add(ret);
-            _events?.Allocate(_bufferSize);
             return ret;
         }
 

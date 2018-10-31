@@ -1,13 +1,9 @@
 ﻿namespace Grillisoft.BufferManager
 {
-    public interface IBufferManagerEvents
+    public interface IAllocEvents
     {
         void Allocate(int size);
 
         void Free(int size);
-
-        void Cache(int size);
-
-        void FreeCache(int size);
     }
 }

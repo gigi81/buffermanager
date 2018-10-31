@@ -11,8 +11,8 @@ namespace Grillisoft.BufferManager
         /// <returns>A two dimensional array of <see cref="T"/> with a total size of at least <paramref name="size"/> (total size can be bigger)</returns>
         T[][] Allocate(int size);
 
-        void Free(T[] data);
-
         void Free(T[][] data);
+
+        void Free(T[] data);
     }
 }
