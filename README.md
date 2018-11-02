@@ -1,2 +1,3 @@
-# buffermanager
-Buffer Manager for C#
+#Managed and Unmanaged buffer managers for dotnet
+
+

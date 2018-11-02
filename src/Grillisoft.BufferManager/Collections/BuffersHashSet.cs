@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Collections
 {
     internal class BuffersHashSet<T>
     {

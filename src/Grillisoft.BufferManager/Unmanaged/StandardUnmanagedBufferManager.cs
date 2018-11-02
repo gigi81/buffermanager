@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Grillisoft.BufferManager.Collections;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Grillisoft.BufferManager
@@ -18,7 +19,7 @@ namespace Grillisoft.BufferManager
         /// <summary>
         /// Container for the cached buffers (available to be reused)
         /// </summary>
-        private readonly BuffersCache<IntPtr> _cache;
+        private readonly BuffersStack<IntPtr> _cache;
 
         /// <summary>
         /// Oject used to syncronise access to the BufferManager
@@ -27,14 +28,14 @@ namespace Grillisoft.BufferManager
 
         private readonly bool _clear;
 
-        public StandardUnmanagedBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, ICacheEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
+        public StandardUnmanagedBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)
                 throw new ArgumentException("Buffer size must be bigger than 0", nameof(bufferSize));
 
             _bufferSize = bufferSize;
             _buffers = new BuffersHashSet<IntPtr>(bufferSize, allocEvents);
-            _cache = new BuffersCache<IntPtr>(bufferSize, cacheEvents, cacheSize);
+            _cache = new BuffersStack<IntPtr>(bufferSize, cacheEvents, cacheSize);
             _clear = clear;
         }
 
