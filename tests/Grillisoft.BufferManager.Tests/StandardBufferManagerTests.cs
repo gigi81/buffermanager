@@ -1,4 +1,5 @@
-﻿using Grillisoft.BufferManager.Statistics;
+﻿using Grillisoft.BufferManager.Managed;
+using Grillisoft.BufferManager.Statistics;
 
 namespace Grillisoft.BufferManager.Tests
 {

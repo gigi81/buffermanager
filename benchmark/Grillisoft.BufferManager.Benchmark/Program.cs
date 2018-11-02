@@ -1,7 +1,7 @@
-﻿using System;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Attributes;
 using System.Linq;
+using Grillisoft.BufferManager.Managed;
 
 namespace Grillisoft.BufferManager.Benchmark
 {

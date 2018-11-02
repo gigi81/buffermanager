@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Managed
 {
     public class GcBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {

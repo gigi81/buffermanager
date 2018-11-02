@@ -1,7 +1,7 @@
-﻿using Grillisoft.BufferManager.Collections;
-using System;
+﻿using System;
+using Grillisoft.BufferManager.Collections;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Managed
 {
     public class StandardBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {

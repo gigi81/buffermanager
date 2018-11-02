@@ -1,8 +1,8 @@
-﻿using Grillisoft.BufferManager.Collections;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using Grillisoft.BufferManager.Collections;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Unmanaged
 {
     public class StandardUnmanagedBufferManager : IUnmanagedBufferManager
     {

@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Unmanaged
 {
-	public class ContiguousUnmanagedBufferManager : IContiguousUnmanagedBufferManager, IDisposable
+	public class SimpleUnmanagedBufferManager : IContiguousUnmanagedBufferManager, IDisposable
     {
         private readonly ConcurrentDictionary<IntPtr, int> _buffers = new ConcurrentDictionary<IntPtr, int>();
 
         private readonly IAllocEvents _events;
 
-        public ContiguousUnmanagedBufferManager(IAllocEvents allocEvents = null)
+        public SimpleUnmanagedBufferManager(IAllocEvents allocEvents = null)
         {
             _events = allocEvents;
         }
@@ -39,16 +38,15 @@ namespace Grillisoft.BufferManager
             _events?.Free(size);
         }
 
-		#region IDisposable Members
-
 		public void Dispose()
 		{
-            foreach(var ptr in _buffers.Keys)
-                Marshal.FreeHGlobal(ptr);
+            foreach(var buffer in _buffers)
+            {
+                Marshal.FreeHGlobal(buffer.Key);
+                _events?.Free(buffer.Value);
+            }
 
             _buffers.Clear();
 		}
-
-		#endregion
 	}
 }
