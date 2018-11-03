@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace Grillisoft.BufferManager.Managed
 {
-    public class GcBufferManager<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
+    public class Simple<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {
         private readonly IAllocEvents _events;
 
-        public GcBufferManager(IAllocEvents allocEvents = null)
+        public Simple(IAllocEvents allocEvents = null)
         {
             _events = allocEvents;
         }

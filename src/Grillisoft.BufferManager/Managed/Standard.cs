@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Grillisoft.BufferManager.Collections;
 
-namespace Grillisoft.BufferManager.Unmanaged
+namespace Grillisoft.BufferManager.Managed
 {
-    public class StandardUnmanagedBufferManager : IUnmanagedBufferManager
+    public class Standard<T> : IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {
         public const int DefaultBufferSize = 4096;
         public const int DefaultCacheSize = 1024 * 1024 * 64; //64MB
@@ -14,12 +13,12 @@ namespace Grillisoft.BufferManager.Unmanaged
         /// <summary>
         /// Container for the buffers in use
         /// </summary>
-        private readonly BuffersHashSet<IntPtr> _buffers;
+        private readonly BuffersHashSet<T[]> _buffers;
 
         /// <summary>
         /// Container for the cached buffers (available to be reused)
         /// </summary>
-        private readonly BuffersStack<IntPtr> _cache;
+        private readonly BuffersStack<T[]> _cache;
 
         /// <summary>
         /// Oject used to syncronise access to the BufferManager
@@ -28,14 +27,14 @@ namespace Grillisoft.BufferManager.Unmanaged
 
         private readonly bool _clear;
 
-        public StandardUnmanagedBufferManager(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
+        public Standard(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)
                 throw new ArgumentException("Buffer size must be bigger than 0", nameof(bufferSize));
 
             _bufferSize = bufferSize;
-            _buffers = new BuffersHashSet<IntPtr>(bufferSize, allocEvents);
-            _cache = new BuffersStack<IntPtr>(bufferSize, cacheEvents, cacheSize);
+            _buffers = new BuffersHashSet<T[]>(bufferSize, allocEvents);
+            _cache = new BuffersStack<T[]>(bufferSize, cacheEvents, cacheSize);
             _clear = clear;
         }
 
@@ -56,12 +55,12 @@ namespace Grillisoft.BufferManager.Unmanaged
         /// </summary>
         /// <param name="size">The total size of the arrays to return</param>
         /// <returns></returns>
-        public IntPtr[] Allocate(int size)
+        public T[][] Allocate(int size)
         {
             if (size <= 0)
-                return new IntPtr[0];
+                return new T[0][];
 
-            var ret = new IntPtr[((size - 1) / _bufferSize) + 1];
+            var ret = new T[((size - 1) / _bufferSize) + 1][];
 
             for (int i = 0; i < ret.Length; i++)
                 ret[i] = this.GetBuffer();
@@ -69,7 +68,7 @@ namespace Grillisoft.BufferManager.Unmanaged
             return ret;
         }
 
-        public void Free(IntPtr[] data)
+        public void Free(T[][] data)
         {
             lock (_sync)
             {
@@ -78,7 +77,7 @@ namespace Grillisoft.BufferManager.Unmanaged
             }
         }
 
-        public void Free(IntPtr data)
+        public void Free(T[] data)
         {
             lock (_sync)
             {
@@ -86,16 +85,15 @@ namespace Grillisoft.BufferManager.Unmanaged
             }
         }
 
-        private void FreeInternal(IntPtr data)
+        private void FreeInternal(T[] data)
         {
             if (!_buffers.Remove(data))
                 return;
 
-            if (!_cache.TryPush(data))
-                Marshal.FreeHGlobal(data);
+            _cache.TryPush(data);
         }
 
-        private IntPtr GetBuffer()
+        private T[] GetBuffer()
         {
             lock (_sync)
             {
@@ -103,28 +101,28 @@ namespace Grillisoft.BufferManager.Unmanaged
             }
         }
 
-        private IntPtr? GetFreeBuffer()
+        private T[] GetFreeBuffer()
         {
             if (!_cache.TryPop(out var ret))
                 return null;
 
             if (_clear)
-                throw new NotImplementedException("Clear not implemented yet. Need to find a good memset for c#");
+                Array.Clear(ret, 0, ret.Length);
 
             return ret;
         }
 
-        private IntPtr CreateBuffer()
+        private T[] CreateBuffer()
         {
-            return Marshal.AllocHGlobal(_bufferSize);
+            return new T[_bufferSize];
         }
 
         public void Dispose()
         {
-            lock(_sync)
+            lock (_sync)
             {
-                _buffers.Clear(ptr => Marshal.FreeHGlobal(ptr));
-                _cache.Clear(ptr => Marshal.FreeHGlobal(ptr));
+                _buffers.Clear();
+                _cache.Clear();
             }
         }
     }

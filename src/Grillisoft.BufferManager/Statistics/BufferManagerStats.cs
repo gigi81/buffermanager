@@ -1,4 +1,6 @@
-﻿namespace Grillisoft.BufferManager.Statistics
+﻿using Grillisoft.BufferManager.Events;
+
+namespace Grillisoft.BufferManager.Statistics
 {
     public class BufferManagerStats
     {

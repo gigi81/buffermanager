@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 
 namespace Grillisoft.BufferManager.Unmanaged
 {
-	public class SimpleUnmanagedBufferManager : IContiguousUnmanagedBufferManager, IDisposable
+	public class Simple : IContiguousUnmanagedBufferManager, IDisposable
     {
         private readonly ConcurrentDictionary<IntPtr, int> _buffers = new ConcurrentDictionary<IntPtr, int>();
 
         private readonly IAllocEvents _events;
 
-        public SimpleUnmanagedBufferManager(IAllocEvents allocEvents = null)
+        public Simple(IAllocEvents allocEvents = null)
         {
             _events = allocEvents;
         }

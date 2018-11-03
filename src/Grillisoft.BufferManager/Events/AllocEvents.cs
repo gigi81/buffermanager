@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Events
 {
     public class AllocEvents : IAllocEvents
     {

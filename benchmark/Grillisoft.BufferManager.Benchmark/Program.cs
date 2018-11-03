@@ -11,9 +11,9 @@ namespace Grillisoft.BufferManager.Benchmark
         [RPlotExporter, RankColumn]
         public class BufferManagerBenchmark
         {
-            private GcBufferManager<byte> _gc;
-            private StandardBufferManager<byte> _standard;
-            private StandardBufferManager<byte> _standardNoClear;
+            private Simple<byte> _simple;
+            private Standard<byte> _standard;
+            private Standard<byte> _standardNoClear;
 
             [Params(1024, 1024 * 16)]
             public int N;
@@ -24,15 +24,15 @@ namespace Grillisoft.BufferManager.Benchmark
             [GlobalSetup]
             public void Setup()
             {
-                _gc = new GcBufferManager<byte>();
-                _standard = new StandardBufferManager<byte>(true, N);
-                _standardNoClear = new StandardBufferManager<byte>(false, N);
+                _simple = new Simple<byte>();
+                _standard = new Standard<byte>(true, N);
+                _standardNoClear = new Standard<byte>(false, N);
             }
 
             [Benchmark]
-            public void Gc()
+            public void Simple()
             {
-                AllocAndFree(_gc);
+                AllocAndFree(_simple);
             }
 
             [Benchmark]
