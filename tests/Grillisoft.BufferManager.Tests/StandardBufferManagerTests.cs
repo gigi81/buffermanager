@@ -9,7 +9,7 @@ namespace Grillisoft.BufferManager.Tests
 
         protected override IBufferManager<byte> CreateManager(BufferManagerStats stats)
         {
-            return new Standard<byte>(true, BufferSize, stats.Allocated, stats.Cached);
+            return new ConcurrentProxy<byte>(new Standard<byte>(true, BufferSize, stats.Allocated, stats.Cached));
         }
 
         protected override int CalculateAllocated(int size)
