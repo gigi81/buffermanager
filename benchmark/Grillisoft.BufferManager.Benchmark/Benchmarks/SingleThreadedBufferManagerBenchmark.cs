@@ -15,7 +15,7 @@ namespace Grillisoft.BufferManager.Benchmark.Benchmarks
         [Params(1024, 1024 * 16)]
         public int BufferSize;
 
-        [Params(512, 2024)]
+        [Params(512, 2048)]
         public int Allocations;
 
         [GlobalSetup]
