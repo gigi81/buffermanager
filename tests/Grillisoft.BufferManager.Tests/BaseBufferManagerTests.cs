@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using Grillisoft.BufferManager.Managed;
 using Grillisoft.BufferManager.Statistics;
 
 namespace Grillisoft.BufferManager.Tests

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Grillisoft.BufferManager
+namespace Grillisoft.BufferManager.Managed
 {
     public interface IBufferManager<T> where T : struct, IComparable, IEquatable<T>, IConvertible
     {
