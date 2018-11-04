@@ -7,7 +7,7 @@ namespace Grillisoft.BufferManager.Benchmark
     {
         static void Main(string[] args)
         {
-            var summary1 = BenchmarkRunner.Run<SingleThreadedBufferManagerBenchmark>();
+            //var summary1 = BenchmarkRunner.Run<SingleThreadedBufferManagerBenchmark>();
             var summary2 = BenchmarkRunner.Run<MultiThreadedBufferManagerBenchmark>();
         }
     }

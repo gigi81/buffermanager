@@ -4,7 +4,7 @@ using Grillisoft.BufferManager.Managed;
 
 namespace Grillisoft.BufferManager.Benchmark.Benchmarks
 {
-    [ClrJob(baseline: true), CoreJob, MonoJob, CoreRtJob]
+    [ClrJob(baseline: true), CoreJob]
     [RPlotExporter, RankColumn]
     public class SingleThreadedBufferManagerBenchmark
     {
