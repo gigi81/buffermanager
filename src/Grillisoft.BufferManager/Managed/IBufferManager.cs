@@ -14,5 +14,7 @@ namespace Grillisoft.BufferManager.Managed
         void Free(T[][] data);
 
         void Free(T[] data);
+
+        void Init(int buffers);
     }
 }

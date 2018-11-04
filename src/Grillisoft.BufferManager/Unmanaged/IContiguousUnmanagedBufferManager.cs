@@ -7,5 +7,7 @@ namespace Grillisoft.BufferManager.Unmanaged
         IntPtr Alloc(int size);
 
         void Free(IntPtr buffer);
+
+        void Init(int buffers);
     }
 }

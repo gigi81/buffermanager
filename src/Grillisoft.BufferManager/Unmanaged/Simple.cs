@@ -48,5 +48,10 @@ namespace Grillisoft.BufferManager.Unmanaged
 
             _buffers.Clear();
 		}
-	}
+
+        public void Init(int buffers)
+        {
+            //nothing to do
+        }
+    }
 }

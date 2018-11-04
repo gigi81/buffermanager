@@ -28,5 +28,9 @@ namespace Grillisoft.BufferManager.Managed
         {
             _events?.Free(data.Sum(d => d.Length));
         }
+
+        public void Init(int buffers)
+        {
+        }
     }
 }
