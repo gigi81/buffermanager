@@ -10,6 +10,16 @@ namespace Grillisoft.BufferManager.Managed
 
         private readonly StandardInternal<T[]> _standard;
 
+        public Standard(bool clear = true, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
+            : this(clear, GetBufferSize<T>(), allocEvents, cacheEvents, cacheSize)
+        {
+        }
+
+        private static int GetBufferSize<TItem>() where TItem : struct
+        {
+            return Environment.SystemPageSize / System.Runtime.InteropServices.Marshal.SizeOf(typeof(TItem));
+        }
+
         public Standard(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)

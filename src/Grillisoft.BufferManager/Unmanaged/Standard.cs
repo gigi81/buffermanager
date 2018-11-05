@@ -10,6 +10,16 @@ namespace Grillisoft.BufferManager.Unmanaged
 
         private readonly StandardInternal<IntPtr> _standard;
 
+        public Standard(bool clear = true, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
+            : this(clear, GetBufferSize(), allocEvents, cacheEvents, cacheSize)
+        {
+        }
+
+        private static int GetBufferSize()
+        {
+            return Environment.SystemPageSize;
+        }
+
         public Standard(bool clear = true, int bufferSize = DefaultBufferSize, IAllocEvents allocEvents = null, IAllocEvents cacheEvents = null, int cacheSize = DefaultCacheSize)
         {
             if (bufferSize <= 0)
