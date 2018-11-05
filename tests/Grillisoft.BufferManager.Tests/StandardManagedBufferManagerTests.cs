@@ -3,7 +3,7 @@ using Grillisoft.BufferManager.Statistics;
 
 namespace Grillisoft.BufferManager.Tests
 {
-    public class StandardBufferManagerTests : BaseBufferManagerTests
+    public class StandardManagedBufferManagerTests : BaseBufferManagerTests
     {
         private const int BufferSize = 4096;
 
