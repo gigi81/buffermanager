@@ -13,7 +13,7 @@ namespace Grillisoft.BufferManager.Tests
 
         protected IUnmanagedBufferManager CreateManager(BufferManagerStats stats)
         {
-            return new Standard(false, BufferSize, stats.Allocated, stats.Cached);
+            return new ConcurrentProxy(new Standard(false, BufferSize, stats.Allocated, stats.Cached));
         }
 
         protected int CalculateAllocated(int size, int count = 1)
