@@ -75,7 +75,7 @@ namespace Grillisoft.BufferManager.Tests
 
                 //nothing allocated, 1 buffer cached
                 Assert.Equal(0, stats.Allocated.Allocated);
-                Assert.Equal(CalculateAllocated(size, count), stats.Cached.Allocated);
+                Assert.Equal(CalculateAllocated(size), stats.Cached.Allocated);
 
                 var allocs = Enumerable.Range(1, count).Select(i => manager.Allocate(size)).ToList();
 
