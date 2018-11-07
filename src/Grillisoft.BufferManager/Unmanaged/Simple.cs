@@ -15,7 +15,7 @@ namespace Grillisoft.BufferManager.Unmanaged
             _events = allocEvents;
         }
 
-        public IntPtr Alloc(int size)
+        public IntPtr Allocate(int size)
 		{
 		    if (size <= 0)
 		        return IntPtr.Zero;

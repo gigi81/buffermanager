@@ -28,6 +28,8 @@ namespace Grillisoft.BufferManager.Managed
             _standard = new StandardInternal<T[]>(new ManagedAllocator<T>(), clear, bufferSize, cacheSize, allocEvents, cacheEvents);
         }
 
+        public int BufferSize => _standard.BufferSize;
+
         public void Init(int buffers)
         {
             _standard.Init(buffers);

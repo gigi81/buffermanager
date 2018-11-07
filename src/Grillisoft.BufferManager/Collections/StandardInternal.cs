@@ -32,6 +32,8 @@ namespace Grillisoft.BufferManager.Collections
             _cache = new BuffersStack<T>(bufferSize, cacheEvents, cacheSize);
         }
 
+        public int BufferSize => _bufferSize;
+
         public void Init(int buffers)
         {
             while (buffers-- > 0)
