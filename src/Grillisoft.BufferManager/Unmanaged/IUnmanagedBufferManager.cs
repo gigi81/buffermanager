@@ -6,6 +6,8 @@ namespace Grillisoft.BufferManager.Unmanaged
     {
         BufferPtr[] Allocate(int size);
 
+        BufferPtr AllocateSingle(int suggestedSize);
+
         void Free(BufferPtr[] buffer);
 
         void Free(IntPtr[] buffer);

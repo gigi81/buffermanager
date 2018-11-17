@@ -61,6 +61,11 @@ namespace Grillisoft.BufferManager.Collections
             return ret;
         }
 
+        public T AllocateSingle()
+        {
+            return this.GetBuffer();
+        }
+
         public void Free(T[] data)
         {
             foreach (var d in data)

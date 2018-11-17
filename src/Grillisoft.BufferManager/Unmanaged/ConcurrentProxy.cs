@@ -32,6 +32,14 @@ namespace Grillisoft.BufferManager.Unmanaged
             }
         }
 
+        public BufferPtr AllocateSingle(int suggestedSize)
+        {
+            lock (_bufferManager)
+            {
+                return _bufferManager.AllocateSingle(suggestedSize);
+            }
+        }
+
         public void Free(IntPtr[] data)
         {
             lock (_bufferManager)

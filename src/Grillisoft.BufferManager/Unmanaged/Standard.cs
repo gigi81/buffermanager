@@ -44,6 +44,11 @@ namespace Grillisoft.BufferManager.Unmanaged
             return _standard.Allocate(size).Select(ptr => new BufferPtr(ptr, _standard.BufferSize)).ToArray();
         }
 
+        public BufferPtr AllocateSingle(int suggestedSize)
+        {
+            return new BufferPtr(_standard.AllocateSingle(), _standard.BufferSize);
+        }
+
         public void Free(BufferPtr[] data)
         {
             _standard.Free(data.Select(d => d.Ptr).ToArray());

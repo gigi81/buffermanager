@@ -33,8 +33,12 @@ namespace Grillisoft.BufferManager.Tests
             using (var manager = CreateManager(stats))
             {
                 var alloc = manager.Allocate(size);
+                Assert.Equal(CalculateAllocated(size), alloc.Sum(a => a.Size));
                 Assert.Equal(CalculateAllocated(size), stats.Allocated.Allocated);
             }
+
+            Assert.Equal(0, stats.Allocated.Allocated);
+            Assert.Equal(0, stats.Cached.Allocated);
         }
 
         [Theory]
@@ -49,12 +53,41 @@ namespace Grillisoft.BufferManager.Tests
             {
                 var alloc = manager.Allocate(size);
 
+                Assert.Equal(CalculateAllocated(size), alloc.Sum(a => a.Size));
                 Assert.Equal(CalculateAllocated(size), stats.Allocated.Allocated);
 
                 manager.Free(alloc);
                 Assert.Equal(0, stats.Allocated.Allocated);
                 Assert.Equal(CalculateAllocated(size), stats.Cached.Allocated);
             }
+
+            Assert.Equal(0, stats.Allocated.Allocated);
+            Assert.Equal(0, stats.Cached.Allocated);
+        }
+
+        [Theory]
+        [InlineData(100)]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
+        public void AllocateSingleAndFree(int suggestedSize)
+        {
+            var stats = new BufferManagerStats();
+            using (var manager = CreateManager(stats))
+            {
+                var alloc = manager.AllocateSingle(suggestedSize);
+
+                Assert.Equal(BufferSize, alloc.Size);
+                Assert.Equal(BufferSize, stats.Allocated.Allocated);
+
+                manager.Free(alloc);
+
+                Assert.Equal(0, stats.Allocated.Allocated);
+                Assert.Equal(BufferSize, stats.Cached.Allocated);
+            }
+
+            Assert.Equal(0, stats.Allocated.Allocated);
+            Assert.Equal(0, stats.Cached.Allocated);
         }
 
         [Theory]
@@ -80,6 +113,7 @@ namespace Grillisoft.BufferManager.Tests
                 var allocs = Enumerable.Range(1, count).Select(i => manager.Allocate(size)).ToList();
 
                 //all count allocated, nothing cached
+                Assert.Equal(CalculateAllocated(size, count), allocs.Sum(b => b.Sum(b1 => b1.Size)));
                 Assert.Equal(CalculateAllocated(size, count), stats.Allocated.Allocated);
                 Assert.Equal(0, stats.Cached.Allocated);
 
@@ -101,6 +135,9 @@ namespace Grillisoft.BufferManager.Tests
                 Assert.Equal(0, stats.Allocated.Allocated);
                 Assert.Equal(CalculateAllocated(size, count), stats.Cached.Allocated);
             }
+
+            Assert.Equal(0, stats.Allocated.Allocated);
+            Assert.Equal(0, stats.Cached.Allocated);
         }
 
         [Theory]
@@ -113,6 +150,7 @@ namespace Grillisoft.BufferManager.Tests
         {
             var randomize = new Random((int)DateTime.Now.Ticks);
             var stats = new BufferManagerStats();
+
             using (var manager = CreateManager(stats))
             {
                 Parallel.ForEach(Enumerable.Range(1, count), i =>
@@ -125,6 +163,9 @@ namespace Grillisoft.BufferManager.Tests
                 Assert.True(stats.Cached.Allocated >= CalculateAllocated(size));
                 Assert.True(stats.Cached.Allocated <= CalculateAllocated(size) * count);
             }
+
+            Assert.Equal(0, stats.Allocated.Allocated);
+            Assert.Equal(0, stats.Cached.Allocated);
         }
     }
 }
