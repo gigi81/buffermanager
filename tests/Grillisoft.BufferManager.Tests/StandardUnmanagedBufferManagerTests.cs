@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using Grillisoft.BufferManager.Unmanaged;
 using Grillisoft.BufferManager.Statistics;
+using System.Threading;
 
 namespace Grillisoft.BufferManager.Tests
 {
@@ -156,6 +157,7 @@ namespace Grillisoft.BufferManager.Tests
                 Parallel.ForEach(Enumerable.Range(1, count), i =>
                 {
                     var alloc = manager.Allocate(size);
+                    Thread.Sleep(randomize.Next(10));
                     manager.Free(alloc);
                 });
 
