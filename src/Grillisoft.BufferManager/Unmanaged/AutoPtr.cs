@@ -4,14 +4,15 @@ namespace Grillisoft.BufferManager.Unmanaged
 {
     public class AutoPtr : IDisposable
     {
-        private readonly IntPtr _ptr;
-        private Action<IntPtr> _free;
+        public readonly BufferPtr Ptr;
 
-        public AutoPtr(IntPtr ptr, Action<IntPtr> free)
+        private Action<BufferPtr> _free;
+
+        public AutoPtr(BufferPtr ptr, Action<BufferPtr> free)
         {
-            _ptr = ptr;
+            Ptr = ptr;
 
-            if(ptr != IntPtr.Zero)
+            if(ptr.Ptr != IntPtr.Zero && free != null)
                 _free = free;
             else
                 GC.SuppressFinalize(this);
@@ -27,7 +28,7 @@ namespace Grillisoft.BufferManager.Unmanaged
             if (_free == null)
                 return;
 
-            _free.Invoke(_ptr);
+            _free.Invoke(Ptr);
             _free = null;
 
             GC.SuppressFinalize(this);
@@ -35,7 +36,7 @@ namespace Grillisoft.BufferManager.Unmanaged
 
         public override int GetHashCode()
         {
-            return _ptr.GetHashCode();
+            return Ptr.GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -44,14 +45,14 @@ namespace Grillisoft.BufferManager.Unmanaged
                 return false;
 
             if(obj is AutoPtr)
-                return _ptr.Equals(((AutoPtr)obj)._ptr);
+                return Ptr.Equals(((AutoPtr)obj).Ptr);
 
-            return _ptr.Equals(obj);
+            return Ptr.Equals(obj);
         }
 
         public override string ToString()
         {
-            return _ptr.ToString();
+            return this.Ptr.ToString();
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Grillisoft.BufferManager.Unmanaged
         /// <param name="autoPtr"></param>
         public static explicit operator IntPtr(AutoPtr autoPtr)
         {
-            return autoPtr._ptr;
+            return autoPtr.Ptr.Ptr;
         }
     }
 }

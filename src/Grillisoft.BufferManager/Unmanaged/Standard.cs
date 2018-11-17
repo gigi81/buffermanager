@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Grillisoft.BufferManager.Collections;
 
 namespace Grillisoft.BufferManager.Unmanaged
@@ -38,14 +39,24 @@ namespace Grillisoft.BufferManager.Unmanaged
         /// </summary>
         /// <param name="size">The total size of the arrays to return</param>
         /// <returns></returns>
-        public IntPtr[] Allocate(int size)
+        public BufferPtr[] Allocate(int size)
         {
-            return _standard.Allocate(size);
+            return _standard.Allocate(size).Select(ptr => new BufferPtr(ptr, _standard.BufferSize)).ToArray();
+        }
+
+        public void Free(BufferPtr[] data)
+        {
+            _standard.Free(data.Select(d => d.Ptr).ToArray());
         }
 
         public void Free(IntPtr[] data)
         {
             _standard.Free(data);
+        }
+
+        public void Free(BufferPtr data)
+        {
+            _standard.Free(data.Ptr);
         }
 
         public void Free(IntPtr data)

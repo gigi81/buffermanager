@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace Grillisoft.BufferManager.Unmanaged
 {
+    /// <summary>
+    /// Simplest implementation of a thread-safe unmanaged buffer manager
+    /// </summary>
 	public class Simple : IContiguousUnmanagedBufferManager, IDisposable
     {
         private readonly ConcurrentDictionary<IntPtr, int> _buffers = new ConcurrentDictionary<IntPtr, int>();
@@ -15,15 +18,20 @@ namespace Grillisoft.BufferManager.Unmanaged
             _events = allocEvents;
         }
 
-        public IntPtr Allocate(int size)
+        public BufferPtr Allocate(int size)
 		{
 		    if (size <= 0)
-		        return IntPtr.Zero;
+		        return BufferPtr.Zero;
 
             var ret = Marshal.AllocHGlobal(size);
             _buffers.TryAdd(ret, size);
             _events?.Allocate(size);
-            return ret;
+            return new BufferPtr(ret, size);
+        }
+
+        public void Free(BufferPtr buffer)
+        {
+            this.Free(buffer.Ptr);
         }
 
         public void Free(IntPtr buffer)

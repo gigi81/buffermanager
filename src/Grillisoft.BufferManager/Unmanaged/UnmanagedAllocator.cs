@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Grillisoft.BufferManager.Unmanaged
 {
+    /// <summary>
+    /// Unmanaged memory <see cref="IAllocator{T}"/>
+    /// </summary>
     public class UnmanagedAllocator : IAllocator<IntPtr>
     {
         public IntPtr Allocate(int size)

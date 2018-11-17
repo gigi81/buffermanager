@@ -24,7 +24,7 @@ namespace Grillisoft.BufferManager.Unmanaged
         /// </summary>
         /// <param name="size">The total size of the arrays to return</param>
         /// <returns></returns>
-        public IntPtr[] Allocate(int size)
+        public BufferPtr[] Allocate(int size)
         {
             lock (_bufferManager)
             {
@@ -53,6 +53,22 @@ namespace Grillisoft.BufferManager.Unmanaged
             lock (_bufferManager)
             {
                 _bufferManager.Dispose();
+            }
+        }
+
+        public void Free(BufferPtr[] buffer)
+        {
+            lock (_bufferManager)
+            {
+                _bufferManager.Free(buffer);
+            }
+        }
+
+        public void Free(BufferPtr buffer)
+        {
+            lock (_bufferManager)
+            {
+                _bufferManager.Free(buffer);
             }
         }
     }

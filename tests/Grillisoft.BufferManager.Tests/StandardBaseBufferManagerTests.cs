@@ -7,7 +7,7 @@ using Grillisoft.BufferManager.Statistics;
 
 namespace Grillisoft.BufferManager.Tests
 {
-    public abstract class BaseBufferManagerTests
+    public abstract class StandardBaseBufferManagerTests
     {
         protected abstract IBufferManager<byte> CreateManager(BufferManagerStats stats);
 
