@@ -94,7 +94,12 @@ namespace Grillisoft.BufferManager.Collections
         private T AllocateBuffer()
         {
             if (!_cache.TryPop(out var buffer))
-                return _allocator.Allocate(_bufferSize);
+            {
+                if(_clear)
+                    return _allocator.CAllocate(_bufferSize);
+                else
+                    return _allocator.Allocate(_bufferSize);
+            }
 
             if (_clear)
                 _allocator.Clear(buffer, _bufferSize);

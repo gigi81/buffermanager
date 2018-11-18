@@ -14,6 +14,13 @@
         T Allocate(int size);
 
         /// <summary>
+        /// Allocate the specified amount of memory <paramref name="size"/> in bytes and sets the newly allocated memory to its default value
+        /// </summary>
+        /// <param name="size">Size of the buffer to allocate in bytes</param>
+        /// <returns></returns>
+        T CAllocate(int size);
+
+        /// <summary>
         /// De-allocate the specified buffer
         /// </summary>
         /// <param name="buffer">Buffer to deallocate</param>

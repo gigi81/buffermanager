@@ -9,6 +9,11 @@ namespace Grillisoft.BufferManager.Managed
             return new T[size];
         }
 
+        public T[] CAllocate(int size)
+        {
+            return new T[size];
+        }
+
         public void Clear(T[] buffer, int size)
         {
             Array.Clear(buffer, 0, size);

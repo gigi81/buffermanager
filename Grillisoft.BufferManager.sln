@@ -5,9 +5,14 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grillisoft.BufferManager", "src\Grillisoft.BufferManager\Grillisoft.BufferManager.csproj", "{D493E7FD-449C-4DB5-83F5-239D8045B766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grillisoft.BufferManager.Tests", "tests\Grillisoft.BufferManager.Tests\Grillisoft.BufferManager.Tests.csproj", "{84F1A306-B1D3-4A4E-9C50-74D8FB4084B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grillisoft.BufferManager.Tests", "tests\Grillisoft.BufferManager.Tests\Grillisoft.BufferManager.Tests.csproj", "{84F1A306-B1D3-4A4E-9C50-74D8FB4084B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grillisoft.BufferManager.Benchmark", "benchmark\Grillisoft.BufferManager.Benchmark\Grillisoft.BufferManager.Benchmark.csproj", "{3725F8EC-B5A0-43C6-8062-4B161DDBD072}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grillisoft.BufferManager.Benchmark", "benchmark\Grillisoft.BufferManager.Benchmark\Grillisoft.BufferManager.Benchmark.csproj", "{3725F8EC-B5A0-43C6-8062-4B161DDBD072}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{555698FD-501E-43B9-88D9-1CD255CE5F31}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

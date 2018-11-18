@@ -12,9 +12,11 @@ namespace Grillisoft.BufferManager.Unmanaged
         private readonly ConcurrentDictionary<IntPtr, int> _buffers = new ConcurrentDictionary<IntPtr, int>();
 
         private readonly IAllocEvents _events;
+        private readonly bool _clear;
 
-        public Simple(IAllocEvents allocEvents = null)
+        public Simple(bool clear = true, IAllocEvents allocEvents = null)
         {
+            _clear = clear;
             _events = allocEvents;
         }
 
@@ -26,6 +28,9 @@ namespace Grillisoft.BufferManager.Unmanaged
             var ret = Marshal.AllocHGlobal(size);
             _buffers.TryAdd(ret, size);
             _events?.Allocate(size);
+            if (_clear)
+                UnmanagedAllocator.ClearBuffer(ret, size);
+
             return new BufferPtr(ret, size);
         }
 
