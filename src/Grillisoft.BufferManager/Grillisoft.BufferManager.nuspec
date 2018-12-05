@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>Luigi Grilli</authors>
+    <owners>Luigi Grilli</owners>
+    <licenseUrl>https://github.com/gigi81/buffermanager/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/gigi81/buffermanager</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>BufferManager library</description>
+    <releaseNotes>Initial nuget release</releaseNotes>
+    <copyright>Copyright 2018 Luigi Grilli</copyright>
+    <tags>buffer manager buffer-manager</tags>
+  </metadata>
+</package>
