@@ -13,6 +13,7 @@ cache:
   - packages
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
+#https://help.appveyor.com/discussions/problems/7680-build-failing-currently-dotnet-pack-command-does-not-have-an-option-to-include-referenced-projects
 #platform: Any CPU
 
 # build Configuration, i.e. Debug, Release, etc.
