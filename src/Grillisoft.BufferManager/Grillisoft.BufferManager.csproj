@@ -4,4 +4,19 @@
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Product>Grillisoft Buffer Managers</Product>
+    <Authors>Luigi Grilli</Authors>
+    <Company>Luigi Grilli</Company>
+	<Description>Managed and Unmanager BufferManager library</Description>
+    <Copyright>© Luigi Grilli. All rights reserved.</Copyright>
+    <PackageLicenseUrl>https://github.com/gigi81/buffermanager/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/gigi81/buffermanager</PackageProjectUrl>
+	<PackageTags>buffer manager buffer-manager</PackageTags>
+	
+	<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+	
+    <RepositoryUrl>https://github.com/gigi81/buffermanager</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
 </Project>
